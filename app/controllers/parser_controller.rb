@@ -6,6 +6,7 @@ class ParserController < ApplicationController
   def index
     url = params[:url]
     selector = params[:selector]
+    callback = params[:callback]
     return(render(:text => '')) if url.blank?
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host)
@@ -13,6 +14,8 @@ class ParserController < ApplicationController
     resp, body = http.get2(path, {'User-Agent' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.1) Gecko/20060111 Firefox/1.5.0.1'})
     return(render(:text => body)) if selector.blank?
     doc = Hpricot(body)
-    render :text => (doc/selector).to_s
+    return(render(:text => (doc/selector).to_s)) if callback.blank?
+    return(render(:text => "#{callback}('#{(doc/selector).to_s.gsub("'","\'")}')")) unless callback.blank?
+    render :text => ''
   end
 end

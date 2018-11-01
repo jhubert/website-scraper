@@ -1,2 +1,2 @@
-require 'website-scraper'
+require './website-scraper'
 run Sinatra::Application
